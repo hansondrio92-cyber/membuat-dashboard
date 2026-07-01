@@ -5,7 +5,8 @@
 # kita tulis class Python, SQLAlchemy yang urus SQL-nya.
 # ============================================================
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy.orm import relationship
 from database import Base
 
 # Class User merepresentasikan tabel bernama "users" di database.
@@ -37,3 +38,49 @@ class User(Base):
 
     # Nama file foto profil. Kosong kalau belum upload.
     photo = Column(String, nullable=True)
+
+    # Relasi ke kelas yang diikuti user
+    enrollments = relationship("Enrollment", back_populates="user", cascade="all, delete-orphan")
+
+
+# Class Course merepresentasikan kelas e-learning teknik sipil.
+class Course(Base):
+    __tablename__ = "courses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    category = Column(String, nullable=False, default="Teknik Sipil")
+    description = Column(Text, nullable=True)
+    level = Column(String, nullable=True)
+    thumbnail = Column(String, nullable=True)
+
+    lessons = relationship("Lesson", back_populates="course", cascade="all, delete-orphan")
+    enrollments = relationship("Enrollment", back_populates="course", cascade="all, delete-orphan")
+
+
+# Class Lesson merepresentasikan materi per pertemuan di dalam kursus.
+class Lesson(Base):
+    __tablename__ = "lessons"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(Integer, ForeignKey("courses.id"), nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    content = Column(Text, nullable=True)
+    order = Column(Integer, nullable=False, default=1)
+
+    course = relationship("Course", back_populates="lessons")
+
+
+# Class Enrollment menyimpan informasi kursus yang dipilih oleh user.
+class Enrollment(Base):
+    __tablename__ = "enrollments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id"),nullable=False)
+    status = Column(String, nullable=False, default="Terdaftar")
+    progress = Column(Integer, default=0)
+
+    user = relationship("User", back_populates="enrollments")
+    course = relationship("Course", back_populates="enrollments")

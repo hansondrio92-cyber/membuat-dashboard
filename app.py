@@ -15,7 +15,7 @@ from database import engine
 import models
 
 # Import router dari masing-masing modul fitur
-from routers import auth, profile
+from routers import auth, profile, dashboard
 
 # ── SETUP APLIKASI ─────────────────────────────────────────
 # FastAPI() membuat instance aplikasi web kita
@@ -38,6 +38,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Semua endpoint di auth.py dan profile.py akan tersedia di app ini.
 app.include_router(auth.router)
 app.include_router(profile.router)
+app.include_router(dashboard.router)
 
 
 # ── HALAMAN UTAMA ──────────────────────────────────────────

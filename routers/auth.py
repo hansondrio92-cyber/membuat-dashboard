@@ -91,8 +91,8 @@ def login_user(
             "error": "Username atau password salah!"
         })
 
-    # Login berhasil → redirect ke halaman profil
-    return RedirectResponse(url=f"/profile/{user.id}", status_code=303)
+    # Login berhasil → redirect ke halaman dashboard seleksi
+    return RedirectResponse(url=f"/dashboard/{user.id}", status_code=303)
 
 
 # ── LOGOUT ────────────────────────────────────────────────
